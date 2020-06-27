@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 let request = require('request');
 const { response } = require('express');
+const { json } = require('body-parser');
 
 var app = express();
 
@@ -39,8 +40,29 @@ app.get('/search', function (req, res) {
 })
 
 app.post('/article', function (req, res) {
-   console.log("Title: %s, Publisher: %s", req.body.title, req.body.publisher);
-   res.send("Thanks!");
+    let title = req.body.title
+    //let publisher = req.body.publisher;
+    let request_params = {
+        method: 'GET',
+        uri: host + path,
+        headers: {
+            'Ocp-Apim-Subscription-Key': subscriptionKey
+        },
+        qs: {
+            q: title,
+            mkt: mkt
+        },
+        json: true
+    }
+
+    request(request_params, function (error, response, body) {
+        let results = body.value.map(entry => [
+            entry.name, entry.url, entry.provider[0].name
+        ]
+        );
+        console.log(body);
+        res.json(results);
+    })
 })
 
 var server = app.listen(8081, function () {
