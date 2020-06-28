@@ -1,10 +1,9 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 let request = require('request');
 const { response } = require('express');
 const { json } = require('body-parser');
-
-var app = express();
 
 let subscriptionKey =  process.env.REEL_NEWS_BING_SUBSCRIPTION_KEY;
 let host = 'https://reelsearch.cognitiveservices.azure.com';
@@ -12,18 +11,8 @@ let path = '/bing/v7.0/news/search';
 let term = 'Microsoft';
 let mkt = 'en-US'
 
-
-// const http = require('http');
-
-// const server = http.createServer((request, response) => {
-//     response.writeHead(200, {"Content-Type": "text/plain"});
-//     response.end("Hello World!");
-// });
-
-// const port = process.env.PORT || 1337;
-// server.listen(port);
-
-// console.log("Server running at http://localhost:%d", port);
+var app = express();
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
