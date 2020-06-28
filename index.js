@@ -35,19 +35,48 @@ app.post('/article', function (req, res) {
         qs: {
             q: title,
             mkt: mkt,
-            count: 50
+            count: 10
         },
         json: true
     }
 
     
+    let ML = function(publisher) {
+        if (publisher.includes("CNN")) {
+            return "Left";
+        } else if (publisher.includes("New York Times")) {
+            return "Left";
+        } else if (publisher.includes("NBC")) {
+            return "Leans Left";
+        }else if (publisher.includes("Vox")) {
+                return "Left";
+        } else if (publisher.includes("MSN")) {
+            return "Neutral";
+        } else if (publisher.includes("Straits")) {
+            return "Leans Right";
+        } else if (publisher.includes("Al Jazeera")) {
+            return "Leans Left";
+        } else if (publisher.includes("PRI")) {
+            return "Leans Left";
+        }  else if (publisher.includes("YAHOO")) {
+            return "Leans Left";
+        } else if (publisher.includes("Fox")) {
+            return "Right";
+        } else if (publisher.includes("Daily Mail")) {
+            return "Right";
+        } else if (publisher.includes("New York Post")) {
+            return "Right";
+        } else {
+            return "Leans Left";
+        }
+    }
 
     request(request_params, function (error, response, body) {
         console.log("Value: "+body.value)
         console.log("Title: "+body.title)
 
         let results = body.value.map(entry => [
-            entry.name, entry.url, entry.provider[0].name, "Leans Neutral"
+            entry.name, entry.url, entry.provider[0].name, ML(entry.provider[0].name)
         ]
         );
         console.log(body);
