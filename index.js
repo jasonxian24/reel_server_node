@@ -105,7 +105,7 @@ app.post('/article', function (req, res) {
         Promise.all(body.value.map(entry => realML(entry.name)))
         .then(values => {
                 let results = body.value.map(function(e, i) {
-                    return [e.name, e.url, e.provider[0].name, ML(e.provider[0].name)]
+                    return [e.name, e.url, e.provider[0].name, ML(e.provider[0].name), values[i]]
                     });
                 console.log(values);
                 console.log(results)
