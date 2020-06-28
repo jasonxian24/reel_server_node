@@ -8,7 +8,8 @@ const { json } = require('body-parser');
 let subscriptionKey =  process.env.REEL_NEWS_BING_SUBSCRIPTION_KEY;
 let host = 'https://reelsearch.cognitiveservices.azure.com';
 let path = '/bing/v7.0/news/search';
-let term = 'Microsoft';
+let entities_path = '/bing/v7.0/entities';
+
 let mkt = 'en-US'
 
 var app = express();
@@ -21,29 +22,31 @@ app.get('/', function (req, res) {
    res.send('ReelNews');
 })
 
-app.get('/search', function (req, res) {
-
+app.get('/entities', function (req, res) {
     let request_params = {
         method: 'GET',
-        uri: host + path,
+        uri: host+entities_path,
         headers: {
             'Ocp-Apim-Subscription-Key': subscriptionKey
         },
         qs: {
-            q: term,
+            q: req.query.term,
             mkt: mkt
         },
         json: true
     }
-
+    
+    // Make request
     request(request_params, function (error, response, body) {
-        console.log(body)
+        console.error('error:', error);
+        console.log('statusCode:', response && response.statusCode);
+    
+        console.log(body);
     })
 })
 
 app.post('/article', function (req, res) {
     let title = req.body.title
-    console.log("POOP")
     console.log(title)
     //let publisher = req.body.publisher;
     let request_params = {
