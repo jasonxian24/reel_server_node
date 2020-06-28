@@ -40,6 +40,35 @@ app.post('/article', function (req, res) {
         json: true
     }
 
+    let realML = function(articleText) {
+        console.log(articleText)
+        let request_params = {
+            method: 'POST',
+            uri: "https://reelnewsdjango.azurewebsites.net/score",
+            body: {
+                text: articleText
+            },
+            headers: {
+                'Content-Type': "application/json"
+            },
+            json: true
+        }
+        return new Promise(function(resolve, reject){
+            request (request_params, function (error, response, body) {
+                var leaningText = "Neutral";
+                if (body.score == 1) {
+                    leaningText = "Left";
+                } else if (body.score == 2) {
+                    leaningText = "Leans Left";
+                } else if (body.score == 4) {
+                    leaningText = "Leans Right";
+                }else if (body.score == 5) {
+                    leaningText = "Right";
+                }
+                resolve(leaningText);
+            })
+        })
+    }
     
     let ML = function(publisher) {
         if (publisher.includes("CNN")) {
@@ -72,15 +101,16 @@ app.post('/article', function (req, res) {
     }
 
     request(request_params, function (error, response, body) {
-        console.log("Value: "+body.value)
-        console.log("Title: "+body.title)
 
-        let results = body.value.map(entry => [
-            entry.name, entry.url, entry.provider[0].name, ML(entry.provider[0].name)
-        ]
-        );
-        console.log(body);
-        res.json(results);
+        Promise.all(body.value.map(entry => realML(entry.name)))
+        .then(values => {
+                let results = body.value.map(function(e, i) {
+                    return [e.name, e.url, e.provider[0].name, values[i]]
+                    });
+                console.log(values);
+                console.log(results)
+                res.json(results);
+            })
     })
 })
 
