@@ -22,29 +22,6 @@ app.get('/', function (req, res) {
    res.send('ReelNews');
 })
 
-app.get('/entities', function (req, res) {
-    let request_params = {
-        method: 'GET',
-        uri: host+entities_path,
-        headers: {
-            'Ocp-Apim-Subscription-Key': subscriptionKey
-        },
-        qs: {
-            q: req.query.term,
-            mkt: mkt
-        },
-        json: true
-    }
-    
-    // Make request
-    request(request_params, function (error, response, body) {
-        console.error('error:', error);
-        console.log('statusCode:', response && response.statusCode);
-    
-        console.log(body);
-    })
-})
-
 app.post('/article', function (req, res) {
     let title = req.body.title
     console.log(title)
@@ -57,7 +34,8 @@ app.post('/article', function (req, res) {
         },
         qs: {
             q: title,
-            mkt: mkt
+            mkt: mkt,
+            count: 50
         },
         json: true
     }
@@ -67,8 +45,9 @@ app.post('/article', function (req, res) {
     request(request_params, function (error, response, body) {
         console.log("Value: "+body.value)
         console.log("Title: "+body.title)
+
         let results = body.value.map(entry => [
-            entry.name, entry.url, entry.provider[0].name
+            entry.name, entry.url, entry.provider[0].name, "Leans Neutral"
         ]
         );
         console.log(body);
